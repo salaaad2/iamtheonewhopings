@@ -1,5 +1,5 @@
-#ifndef L_MAIN_H_
-#define L_MAIN_H_
+#ifndef P_MAIN_H_
+#define P_MAIN_H_
 
 #include <sys/param.h>
 #include <sys/types.h>
@@ -12,6 +12,7 @@ typedef unsigned char bool_t;
 typedef struct s_opts {
     bool_t	verbose;
     bool_t	help;
+    bool_t	noopt;
 } t_opts;
 
 typedef struct s_elem {

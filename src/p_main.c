@@ -1,15 +1,15 @@
 /*****************************************************************************/
-/*                      FT_PING by fmoenne. file: l_main.c                     */
+/*                      FT_PING by fmoenne. file: p_main.c                     */
 /*****************************************************************************/
 
 #include <stdlib.h>
 
 #include "../libft/include/libft.h"
 
-#include "l_main.h"
+#include "p_main.h"
 #include "u_lstcont.h"
 #include "u_opts.h"
-#include "e_open.h"
+#include "e_ping.h"
 
 /*
 ** check for flags;
@@ -41,6 +41,14 @@ int main(int ac, char *av[])
             l_lstadd_back(&elem, new);
         }
         i++;
+    }
+    if (opts->help == 1)
+    {
+        return (e_help());
+    } else if (l_lstsize(elem) == 1) {
+        ft_dprintf(2, "ft_ping: usage error: Destination address required\n");
+    } else {
+        return (e_start(elem->next));
     }
     return (0);
 }

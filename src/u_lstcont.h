@@ -1,7 +1,7 @@
 #ifndef U_LSTCONT_H_
 #define U_LSTCONT_H_
 
-#include "l_main.h"
+#include "p_main.h"
 
 void					l_lstadd_front(t_elem **alst, t_elem *new);
 void					l_lstadd_back(t_elem **alst, t_elem *new);
