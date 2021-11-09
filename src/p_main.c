@@ -48,7 +48,8 @@ int main(int ac, char *av[])
     } else if (l_lstsize(elem) == 1) {
         ft_dprintf(2, "ft_ping: usage error: Destination address required\n");
     } else {
-        return (e_start(elem->next, opts));
+        elem = elem->next;
+        return (e_start(elem, opts));
     }
     return (0);
 }
@@ -57,13 +58,10 @@ int main(int ac, char *av[])
 ** ====== INFO ======
 ** Files prefixes info
 ** -------------------
-** b_  -> builtins related
 ** d_  -> defines related
 ** e_  -> exec related
 ** f_  -> failure related
-** m_  -> core minishell related
 ** p_  -> parse related
-** s_  -> structs related
 ** u_  -> utils related
 ** v_  -> general purpose variables related
 */
