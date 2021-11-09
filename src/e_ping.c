@@ -25,19 +25,31 @@ int
 e_output(char * outbuf, unsigned char verbose)
 {
     if (verbose) {
-        ft_printf("%s verbose", outbuf)
+        ft_printf("%s verbose", outbuf);
     } else {
         ft_printf("%s", outbuf);
     }
-
+    return (0);
 }
 
 int
 e_start(t_elem * node, t_opts * opts)
 {
+    char send_buf[512];
     char * address = (char*)node->content;
     char outbuf[4096 * 4096];
 
+    struct sockaddr_in servaddr;
+
+    ft_bzero(&servaddr, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_addr.s_addr = htonl(2130706433);
+    servaddr.sin_port = htons(80);
+
+    (void)address;
+    (void)send_buf;
+
 
     e_output(outbuf, opts->verbose);
+    return (0);
 }

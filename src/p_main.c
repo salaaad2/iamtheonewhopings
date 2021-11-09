@@ -48,7 +48,7 @@ int main(int ac, char *av[])
     } else if (l_lstsize(elem) == 1) {
         ft_dprintf(2, "ft_ping: usage error: Destination address required\n");
     } else {
-        return (e_start(elem->next));
+        return (e_start(elem->next, opts));
     }
     return (0);
 }
