@@ -64,11 +64,12 @@ e_ping(int sock, struct sockaddr_in * addr, struct addrinfo *res, char * ipstr)
 int
 e_start(t_elem * node, t_opts * opts)
 {
-    char send_buf[512];
     char * address = (char*)node->content;
     char outbuf[4096];
     char ipstr[4096];
     char ipstr2[4096];
+    struct icmphdr icmp_hdr;
+    char packdata[sizeof(icmp_hdr) + 5];
     struct addrinfo hints, * res, *p;
     struct sockaddr_in * servaddr;
     void * addr;
@@ -96,11 +97,10 @@ e_start(t_elem * node, t_opts * opts)
             return (u_printerr("invalid address", ipstr));
         }
         sock = e_setsockets();
-        p_initpacket(1234, 1);
+        p_initpacket(packdata, &icmp_hdr, 1234, 1);
         ft_memcpy(outbuf, e_ping(sock, servaddr, p, ipstr), sizeof(outbuf));
     }
 
-    (void)send_buf;
     freeaddrinfo(res);
 
 

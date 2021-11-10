@@ -4,6 +4,8 @@
 #include <netinet/ip_icmp.h>
 #include <arpa/inet.h>
 
-int p_initpacket(int id, int seq);
+#include "../libft/include/libft.h"
+
+int p_initpacket(char * packdata, struct icmphdr * hdr, int id, int seq);
 
 #endif
