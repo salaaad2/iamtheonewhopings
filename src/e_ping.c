@@ -39,8 +39,9 @@ e_setsockets()
 {
     const int hdr = 1;
     int sockfd;
+    (void)hdr;
 
-    if ((sockfd = socket(AF_INET, SOCK_RAW, SOCK_RAW)) < 0)
+    if ((sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP)) < 0)
     {
         return (u_printerr("failed to create socket", "socket"));
     }
@@ -54,10 +55,12 @@ e_setsockets()
 char *
 e_ping(int sock, struct sockaddr_in * addr, struct addrinfo *res, char * ipstr)
 {
-    (void)sock;
-    (void)addr;
     (void)res;
     (void)ipstr;
+    if (sendto(sock, "hello", ft_strlen("hello"), 0, (const struct sockaddr *)addr, sizeof(*addr)) < 0)
+    {
+        u_printerr("call to sendto() failed", "sendto()");
+    }
     return (NULL);
 }
 
@@ -98,7 +101,7 @@ e_start(t_elem * node, t_opts * opts)
         }
         sock = e_setsockets();
         p_initpacket(packdata, &icmp_hdr, 1234, 1);
-        ft_memcpy(outbuf, e_ping(sock, servaddr, p, ipstr), sizeof(outbuf));
+        e_ping(sock, servaddr, p, ipstr);
     }
 
     freeaddrinfo(res);
