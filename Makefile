@@ -16,6 +16,7 @@ LFT_SRCS_DIR	 = ${LFT_DIR}src/
 #--------------------------------- FILES --------------------------------------#
 #==============================================================================#
 SRCS_NAME		 = p_main
+SRCS_NAME		 += p_packets
 SRCS_NAME		 += e_ping
 SRCS_NAME		 += u_opts
 SRCS_NAME		 += u_lstact

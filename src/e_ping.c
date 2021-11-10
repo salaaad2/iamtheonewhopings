@@ -12,6 +12,7 @@
 #include <arpa/inet.h>
 
 #include "e_ping.h"
+#include "p_packets.h"
 #include "u_err.h"
 
 int
@@ -50,6 +51,16 @@ e_setsockets()
     return (sockfd);
 }
 
+char *
+e_ping(int sock, struct sockaddr_in * addr, struct addrinfo *res, char * ipstr)
+{
+    (void)sock;
+    (void)addr;
+    (void)res;
+    (void)ipstr;
+    return (NULL);
+}
+
 int
 e_start(t_elem * node, t_opts * opts)
 {
@@ -73,7 +84,7 @@ e_start(t_elem * node, t_opts * opts)
     }
 
     p = res;
-    while (p != NULL)
+    if (p != NULL)
     {
         servaddr = (struct sockaddr_in *)p->ai_addr;
         addr = &(servaddr->sin_addr);
@@ -84,9 +95,10 @@ e_start(t_elem * node, t_opts * opts)
         } else {
             return (u_printerr("invalid address", ipstr));
         }
-        p = p->ai_next;
+        sock = e_setsockets();
+        p_initpacket(1234, 1);
+        ft_memcpy(outbuf, e_ping(sock, servaddr, p, ipstr), sizeof(outbuf));
     }
-    sock = e_setsockets();
 
     (void)send_buf;
     freeaddrinfo(res);
