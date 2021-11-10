@@ -107,6 +107,6 @@ fclean: clean
 re: fclean all
 #------------------------------------------------------------------------------#
 run: all
-	clear; ./${NAME} google.com
+	./${NAME} google.com
 #------------------------------------------------------------------------------#
 .PHONY:	all clean clean fclean re debug asan run
