@@ -34,6 +34,23 @@ e_output(char * outbuf, unsigned char verbose)
 }
 
 int
+e_setsockets()
+{
+    const int hdr = 1;
+    int sockfd;
+
+    if ((sockfd = socket(AF_INET, SOCK_RAW, SOCK_RAW)) < 0)
+    {
+        return (u_printerr("failed to create socket", "socket"));
+    }
+    if ((setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL, &hdr, sizeof(hdr))) < 0)
+    {
+        return (u_printerr("failed to set socket options", "setsockopt"));
+    }
+    return (sockfd);
+}
+
+int
 e_start(t_elem * node, t_opts * opts)
 {
     char send_buf[512];
@@ -44,6 +61,7 @@ e_start(t_elem * node, t_opts * opts)
     struct addrinfo hints, * res, *p;
     struct sockaddr_in * servaddr;
     void * addr;
+    int sock;
 
     ft_bzero(&hints, sizeof(hints));
     hints.ai_family = AF_INET;
@@ -59,21 +77,19 @@ e_start(t_elem * node, t_opts * opts)
     {
         servaddr = (struct sockaddr_in *)p->ai_addr;
         addr = &(servaddr->sin_addr);
-        ft_printf("as num : \n");
         inet_ntop(p->ai_family, addr, ipstr, sizeof(ipstr));
         ft_printf("ip4: %s\n", ipstr);
-        /* pton */
-        ft_printf("as string : \n");
-        inet_pton(p->ai_family, ipstr, ipstr2);
-        ft_printf("ip4: %s\n", ipstr2);
-        /* ntop */
+        if (inet_pton(p->ai_family, ipstr, ipstr2) == 1) {
+            ft_printf("ip4: %s\n", ipstr2);
+        } else {
+            return (u_printerr("invalid address", ipstr));
+        }
         p = p->ai_next;
     }
+    sock = e_setsockets();
 
-
-
-    (void)servaddr;
     (void)send_buf;
+    freeaddrinfo(res);
 
 
     e_output(outbuf, opts->verbose);
