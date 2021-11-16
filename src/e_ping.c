@@ -47,7 +47,7 @@ e_setsockets()
     {
         return (u_printerr("failed to create socket", "socket"));
     }
-    if ((setsockopt(sockfd, IPPROTO_ICMP, IP_HDRINCL, &hdr, sizeof(hdr))) != 0)
+    if ((setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL, &hdr, sizeof(hdr))) != 0)
     {
         ft_printf("%s %d\n", strerror(errno), errno);
         sockfd = -1;
