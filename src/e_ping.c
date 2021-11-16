@@ -43,11 +43,11 @@ e_setsockets()
     const int hdr = 1;
     int sockfd;
 
-    if ((sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_ICMP)) < 0)
+    if ((sockfd = socket(AF_INET, SOCK_DGRAM|SOCK_CLOEXEC|SOCK_NONBLOCK, IPPROTO_IP)) < 0)
     {
         return (u_printerr("failed to create socket", "socket"));
     }
-    if ((setsockopt(sockfd, IPPROTO_IP, IP_HDRINCL, &hdr, sizeof(hdr))) != 0)
+    if ((setsockopt(sockfd, SOL_IP, IP_RECVERR, &hdr, sizeof(hdr))) != 0)
     {
         ft_printf("%s %d\n", strerror(errno), errno);
         sockfd = -1;
@@ -61,7 +61,7 @@ e_ping(int sock, struct sockaddr_in * addr, struct addrinfo *res, char * ipstr)
 {
     (void)res;
     (void)ipstr;
-    if (sendto(sock, "hello", ft_strlen("hello"), 0, (const struct sockaddr *)addr, sizeof(*addr)) < 0)
+    if (sendto(sock, , 64, 0, (const struct sockaddr *)addr, sizeof(const struct sockaddr)) < 0)
     {
         u_printerr("call to sendto() failed", "sendto()");
     }

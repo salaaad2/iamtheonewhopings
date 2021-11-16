@@ -3,6 +3,9 @@
 
 #include "../libft/include/libft.h"
 
+#include <errno.h>
+#include <string.h>
+
 int u_printerr(char * reason, char * value);
 
 #endif
