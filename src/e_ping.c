@@ -5,14 +5,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
-#include <netinet/in.h>
-#include <netinet/in_systm.h>
-#include <netinet/ip.h>
-#include <netinet/ip_icmp.h>
 #include <arpa/inet.h>
-
-#include <string.h>
-#include <errno.h>
 
 #include "e_ping.h"
 #include "p_packets.h"
@@ -61,7 +54,8 @@ e_ping(int sock, struct sockaddr_in * addr, struct addrinfo *res, char * ipstr)
 {
     (void)res;
     (void)ipstr;
-    if (sendto(sock, , 64, 0, (const struct sockaddr *)addr, sizeof(const struct sockaddr)) < 0)
+    addr->sin_port = htons(58);
+    if (sendto(sock, "ccoolcoolcoo", 64, 0, (struct sockaddr *)addr, sizeof(const struct sockaddr)) < 0)
     {
         u_printerr("call to sendto() failed", "sendto()");
     }
@@ -75,7 +69,8 @@ e_start(t_elem * node, t_opts * opts)
     char outbuf[4096];
     char ipstr[4096];
     char ipstr2[4096];
-    struct addrinfo hints, * res;
+    struct addrinfo hints;
+    struct addrinfo * res;
     struct sockaddr_in * servaddr;
     struct icmphdr icmp_hdr;
     char packdata[sizeof(icmp_hdr) + 5];
@@ -99,7 +94,7 @@ e_start(t_elem * node, t_opts * opts)
         inet_ntop(res->ai_family, addr, ipstr, sizeof(ipstr));
         ft_printf("ip4: %s\n", ipstr);
         if (inet_pton(res->ai_family, ipstr, ipstr2) == 1) {
-            /* ft_printf("ip4: %s\n", ipstr2); */
+            ft_printf("mysterious");
         } else {
             return (u_printerr("invalid address", ipstr));
         }

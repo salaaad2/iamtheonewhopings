@@ -2,7 +2,6 @@
 #define P_PACKETS_H_
 
 #include <netinet/ip_icmp.h>
-#include <arpa/inet.h>
 
 #include "../libft/include/libft.h"
 
