@@ -42,12 +42,12 @@ p_initpacket(char * packdata, struct icmphdr * hdr)
     }
 
 	time = ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
-    (void)time;
 
-    hdr->checksum = p_checksum(hdr, sizeof(struct icmphdr));
     ft_memcpy(packdata, hdr, sizeof(struct icmphdr));
-    /* ft_memcpy(packdata + sizeof(struct icmphdr), , 1); */
-    ft_memcpy(packdata + sizeof(struct icmphdr), PAD_DATA, 48);
+    ft_memcpy(packdata + sizeof(struct icmphdr), &time, 8);
+    ft_memcpy(packdata + sizeof(struct icmphdr) + 8, PAD_DATA, 48);
+
+    hdr->checksum = p_checksum(packdata, PACK_SIZE);
 
 
     ft_printf("sizeof : %d\n", (int)sizeof(struct icmphdr));
