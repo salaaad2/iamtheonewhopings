@@ -17,25 +17,30 @@ p_checksum(const void *data, size_t size)
 
     sum = (sum >> 16) + (sum & 0xFFFF);
     sum += (sum >> 16);
-    ft_printf("sum : %d\nPACK_SIZE: %ld", (int16_t)~sum, PACK_SIZE);
+    /* ft_printf("sum : %d\nPACK_SIZE: %ld", (int16_t)~sum, PACK_SIZE); */
 
     return (int16_t)~sum;
 }
 
 int
-p_initpacket(char * packdata, struct icmphdr * hdr)
+p_initpacket(t_pack * pack)
 {
-    if ((hdr = ft_calloc(1, sizeof(struct icmphdr))) == NULL) {
-        u_printerr("malloc", "malloc");
-    }
+    uint16_t i = 0;
 
-    hdr->type = ICMP_ECHO;
-    hdr->code = 0;
-    hdr->checksum = 0;
-    hdr->un.echo.id = getpid();
-    hdr->un.echo.sequence = 0;
-    hdr->un.frag.mtu = 1;
-    ft_memcpy(packdata, hdr, sizeof(struct icmphdr));
-    hdr->checksum = p_checksum(packdata, PACK_SIZE);
+    ft_bzero(pack, sizeof(pack));
+
+    pack->hdr.type = ICMP_ECHO;
+    pack->hdr.code = 0;
+    pack->hdr.checksum = 0;
+    pack->hdr.un.echo.id = getpid();
+    pack->hdr.un.echo.sequence = 1;
+
+    while (i < (DATA_SIZE - 1))
+    {
+        pack->load[i] = i + '9';
+        i++;
+    }
+    pack->load[i] = '\0';
+    pack->hdr.checksum = p_checksum(pack, PACK_SIZE);
     return (0);
 }

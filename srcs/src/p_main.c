@@ -3,6 +3,7 @@
 /*****************************************************************************/
 
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "../libft/include/libft.h"
 
@@ -22,6 +23,13 @@ int main(int ac, char *av[])
     char * url;
     t_opts * opts;
     int i;
+
+    if (getuid() != 0)
+    {
+        return (
+            u_printerr("fatal error", "insuficient rights")
+        );
+    }
 
     i = 1;
     opts = u_initopts();
@@ -59,10 +67,7 @@ int main(int ac, char *av[])
 ** ====== INFO ======
 ** Files prefixes info
 ** -------------------
-** d_  -> defines related
-** e_  -> exec related
-** f_  -> failure related
-** p_  -> parse related
-** u_  -> utils related
-** v_  -> general purpose variables related
+** p_  -> packets
+** e_  -> exec
+** u_  -> utils
 */
