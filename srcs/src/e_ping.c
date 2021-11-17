@@ -36,7 +36,7 @@ e_setsockets()
     const int hdr = 1;
     int sockfd;
 
-    if ((sockfd = socket(AF_INET, SOCK_DGRAM|SOCK_CLOEXEC|SOCK_NONBLOCK, IPPROTO_IP)) < 0)
+    if ((sockfd = socket(AF_INET, SOCK_DGRAM|SOCK_CLOEXEC, IPPROTO_IP)) < 0)
     {
         return (u_printerr("failed to create socket", "socket"));
     }
@@ -52,14 +52,20 @@ e_setsockets()
 char *
 e_ping(int sock, struct sockaddr_in * addr, struct addrinfo *res, char * ipstr)
 {
+    char  response[64];
+    socklen_t addrsize = sizeof(const struct sockaddr);
     (void)res;
     (void)ipstr;
-    addr->sin_port = htons(58);
-    if (sendto(sock, "ccoolcoolcoo", 64, 0, (struct sockaddr *)addr, sizeof(const struct sockaddr)) < 0)
+
+    if (sendto(sock, "ccoolcoolcoo", 11, 0, (struct sockaddr *)addr, addrsize) < 0)
     {
         u_printerr("call to sendto() failed", "sendto()");
     }
-    return (NULL);
+    if (recvfrom(sock, response, 64, 0, (struct sockaddr *)addr, &addrsize) < 0)
+    {
+        u_printerr("call to recvfrom() failed", "sendto()");
+    }
+    return (ft_strdup(response));
 }
 
 int
@@ -90,11 +96,12 @@ e_start(t_elem * node, t_opts * opts)
     if (res != NULL)
     {
         servaddr = (struct sockaddr_in *)res->ai_addr;
+        servaddr->sin_port = htons(58);
         addr = &(servaddr->sin_addr);
         inet_ntop(res->ai_family, addr, ipstr, sizeof(ipstr));
         ft_printf("ip4: %s\n", ipstr);
         if (inet_pton(res->ai_family, ipstr, ipstr2) == 1) {
-            ft_printf("mysterious");
+            ft_printf("mysterious\n");
         } else {
             return (u_printerr("invalid address", ipstr));
         }

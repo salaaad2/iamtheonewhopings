@@ -137,13 +137,13 @@ ifeq (${OS}, FreeBSD)
 CC			 = cc
 endif
 ifeq (${OS}, Linux)
-CC			 = clang
+CC			 = gcc
 endif
 ifeq (${OS}, Darwin)
 CC			 = cc
 endif
 #------------------------------------------------------------------------------#
-CFLAGS		 = -std=c89
+CFLAGS		 = -std=gnu89
 CFLAGS		+= -Wall
 CFLAGS		+= -Wextra
 CFLAGS		+= -Werror
