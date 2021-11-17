@@ -36,7 +36,7 @@ e_setsockets(void)
     const int hdr = 1;
     int sockfd;
 
-    if ((sockfd = socket(AF_INET, SOCK_RAW|SOCK_CLOEXEC, IPPROTO_ICMP)) < 0)
+    if ((sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0)
     {
         return (u_printerr("failed to create socket", "socket"));
     }
@@ -50,17 +50,16 @@ e_setsockets(void)
 }
 
 char *
-e_ping(int sock, struct sockaddr_in * addr, char * packdata, char * ipstr)
+e_ping(int sock, struct sockaddr_in * addr, char * packdata)
 {
     char  response[64];
     socklen_t addrsize = sizeof(const struct sockaddr);
-    (void)ipstr;
 
-    if (sendto(sock, packdata, sizeof(struct icmphdr), 0, (struct sockaddr *)addr, addrsize) < 0)
+    if (sendto(sock, packdata, PACK_SIZE, 0, (struct sockaddr *)addr, addrsize) < 0)
     {
         u_printerr("call to sendto() failed", "sendto()");
     }
-    if (recvfrom(sock, response, 64, 0, (struct sockaddr *)addr, &addrsize) < 0)
+    if (recvfrom(sock, response, PACK_SIZE, 0, (struct sockaddr *)addr, &addrsize) < 0)
     {
         u_printerr("call to recvfrom() failed", "sendto()");
     }
@@ -74,18 +73,18 @@ e_start(t_elem * node, t_opts * opts)
     char outbuf[4096];
     char ipstr[4096];
     char ipstr2[4096];
-    struct addrinfo hints;
     struct addrinfo * res;
     struct sockaddr_in * servaddr;
     struct icmphdr icmp_hdr;
-    char packdata[sizeof(icmp_hdr) + 5];
+    char packdata[PACK_SIZE];
     void * addr;
     int sock;
 
-    ft_bzero(&hints, sizeof(hints));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = 0;
+    struct addrinfo hints = {
+        AI_CANONNAME, AF_INET, SOCK_RAW, IPPROTO_ICMP, 0, NULL, NULL, NULL
+    };
+
+    ft_bzero(&packdata, PACK_SIZE);
 
     if ((getaddrinfo(lookup, NULL, &hints, &res)) < 0)
     {
@@ -110,11 +109,9 @@ e_start(t_elem * node, t_opts * opts)
 
     sock = e_setsockets();
     p_initpacket(packdata, &icmp_hdr, 0);
-    e_ping(sock, servaddr, packdata, ipstr);
+    e_ping(sock, servaddr, packdata);
 
     freeaddrinfo(res);
-
-
     e_output(outbuf, opts->verbose);
     return (0);
 }

@@ -21,7 +21,7 @@ p_checksum(const void *data, size_t size)
 int
 p_initpacket(char * packdata, struct icmphdr * hdr, int seq)
 {
-    ft_bzero(hdr, sizeof(struct icmphdr));
+    ft_bzero(hdr, sizeof(struct icmphdr) + 5);
     hdr->type = ICMP_ECHO;
     hdr->code = 0;
     hdr->checksum = 0;
@@ -30,6 +30,6 @@ p_initpacket(char * packdata, struct icmphdr * hdr, int seq)
 
     hdr->checksum = p_checksum(hdr, sizeof(struct icmphdr));
 
-    ft_memcpy(packdata, &hdr, sizeof(struct icmphdr));
+    ft_memcpy(packdata, &hdr, sizeof(PACK_SIZE));
     return (0);
 }
