@@ -67,7 +67,7 @@ e_ping(int sock, struct sockaddr_in * addr, char * packdata)
 }
 
 int
-e_start(t_elem * node, t_opts * opts)
+e_start(t_opts * opts)
 {
     char * lookup = (char*)node->content;
     char outbuf[4096];

@@ -15,10 +15,4 @@ typedef struct s_opts {
     bool_t	noopt;
 } t_opts;
 
-typedef struct s_elem {
-    void * content;
-
-    struct s_elem * next;
-} t_elem;
-
 #endif

@@ -19,13 +19,11 @@
 
 int main(int ac, char *av[])
 {
-    t_elem * elem;
-    t_elem * new;
+    char * url;
     t_opts * opts;
     int i;
 
     i = 1;
-    elem = l_lstnew(".");
     opts = u_initopts();
     while (i < ac)
     {
@@ -35,21 +33,17 @@ int main(int ac, char *av[])
         }
         else
         {
-            new = malloc(sizeof(t_elem));
-            new->content = av[i];
-            new->next = NULL;
-            l_lstadd_back(&elem, new);
+            if ()
         }
         i++;
     }
     if (opts->help == 1)
     {
         return (e_help());
-    } else if (l_lstsize(elem) == 1) {
+    } else if (url == NULL) {
         ft_dprintf(2, "ft_ping: usage error: Destination address required\n");
     } else {
-        elem = elem->next;
-        return (e_start(elem, opts));
+        return (e_start(url, opts));
     }
     return (0);
 }
