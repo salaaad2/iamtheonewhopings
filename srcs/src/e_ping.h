@@ -5,8 +5,9 @@
 #include "p_main.h"
 
 #define ICMP_SIZE sizeof(struct icmphdr)
-#define DATA_SIZE 56
-#define PACK_SIZE ICMP_SIZE + DATA_SIZE
+#define DATA_SIZE 48
+#define PACK_SIZE ICMP_SIZE + DATA_SIZE + 8
+#define PAD_DATA "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 
 int e_help( void );
 int e_start(t_elem * node, t_opts * opts);

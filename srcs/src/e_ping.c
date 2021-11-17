@@ -52,7 +52,7 @@ e_setsockets(void)
 char *
 e_ping(int sock, struct sockaddr_in * addr, char * packdata)
 {
-    char  response[64];
+    char  response[PACK_SIZE];
     socklen_t addrsize = sizeof(const struct sockaddr);
 
     if (sendto(sock, packdata, PACK_SIZE, 0, (struct sockaddr *)addr, addrsize) < 0)
@@ -75,15 +75,15 @@ e_start(t_elem * node, t_opts * opts)
     char ipstr2[4096];
     struct addrinfo * res;
     struct sockaddr_in * servaddr;
-    struct icmphdr icmp_hdr;
+    struct icmphdr * icmp_hdr;
     char packdata[PACK_SIZE];
     void * addr;
     int sock;
-
     struct addrinfo hints = {
         AI_CANONNAME, AF_INET, SOCK_RAW, IPPROTO_ICMP, 0, NULL, NULL, NULL
     };
 
+    icmp_hdr = NULL;
     ft_bzero(&packdata, PACK_SIZE);
 
     if ((getaddrinfo(lookup, NULL, &hints, &res)) < 0)
@@ -94,7 +94,6 @@ e_start(t_elem * node, t_opts * opts)
     if (res != NULL)
     {
         servaddr = (struct sockaddr_in *)res->ai_addr;
-        servaddr->sin_port = htons(58);
         addr = &(servaddr->sin_addr);
         inet_ntop(res->ai_family, addr, ipstr, sizeof(ipstr));
         ft_printf("ip4: %s\n", ipstr);
@@ -108,7 +107,7 @@ e_start(t_elem * node, t_opts * opts)
     }
 
     sock = e_setsockets();
-    p_initpacket(packdata, &icmp_hdr, 0);
+    p_initpacket(packdata, icmp_hdr);
     e_ping(sock, servaddr, packdata);
 
     freeaddrinfo(res);
