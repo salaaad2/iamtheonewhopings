@@ -36,7 +36,7 @@ e_setsockets(void)
     const int hdr = 1;
     int sockfd;
 
-    if ((sockfd = socket(AF_INET, SOCK_DGRAM|SOCK_CLOEXEC, IPPROTO_IP)) < 0)
+    if ((sockfd = socket(AF_INET, SOCK_RAW|SOCK_CLOEXEC, IPPROTO_ICMP)) < 0)
     {
         return (u_printerr("failed to create socket", "socket"));
     }
@@ -56,7 +56,7 @@ e_ping(int sock, struct sockaddr_in * addr, char * packdata, char * ipstr)
     socklen_t addrsize = sizeof(const struct sockaddr);
     (void)ipstr;
 
-    if (sendto(sock, packdata, 64, 0, (struct sockaddr *)addr, addrsize) < 0)
+    if (sendto(sock, packdata, sizeof(struct icmphdr), 0, (struct sockaddr *)addr, addrsize) < 0)
     {
         u_printerr("call to sendto() failed", "sendto()");
     }
