@@ -19,8 +19,6 @@ SRCS_NAME		 = p_main
 SRCS_NAME		 += p_packets
 SRCS_NAME		 += e_ping
 SRCS_NAME		 += u_opts
-SRCS_NAME		 += u_lstact
-SRCS_NAME		 += u_lstcont
 SRCS_NAME		 += u_err
 #------------------------------------------------------------------------------#
 SRCS			 = $(addprefix ${SRCS_DIR}, $(addsuffix .c, ${SRCS_NAME}))

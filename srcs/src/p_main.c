@@ -7,14 +7,14 @@
 #include "../libft/include/libft.h"
 
 #include "p_main.h"
-#include "u_lstcont.h"
 #include "u_opts.h"
+#include "u_err.h"
 #include "e_ping.h"
 
 /*
 ** check for flags;
 ** initialize linked list containing t_elem elements with all non option arguments.
-**
+** ^ this was dumb and subsequently got removed
 */
 
 int main(int ac, char *av[])
@@ -27,13 +27,16 @@ int main(int ac, char *av[])
     opts = u_initopts();
     while (i < ac)
     {
-        if (av[i][0] == '-')
-        {
+        if (av[i][0] == '-') {
             u_getopts(av, opts);
-        }
-        else
-        {
-            if ()
+        } else {
+            if (url == NULL) {
+                url = av[i];
+            } else {
+                return (
+                    u_printerr("usage error", "Destination address required")
+                    );
+            }
         }
         i++;
     }
@@ -41,9 +44,13 @@ int main(int ac, char *av[])
     {
         return (e_help());
     } else if (url == NULL) {
-        ft_dprintf(2, "ft_ping: usage error: Destination address required\n");
+        return (
+            u_printerr("usage error", "Destination address required")
+            );
     } else {
-        return (e_start(url, opts));
+        return (
+            e_start(url, opts)
+        );
     }
     return (0);
 }

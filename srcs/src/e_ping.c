@@ -67,9 +67,8 @@ e_ping(int sock, struct sockaddr_in * addr, char * packdata)
 }
 
 int
-e_start(t_opts * opts)
+e_start(char *url, t_opts * opts)
 {
-    char * lookup = (char*)node->content;
     char outbuf[4096];
     char ipstr[4096];
     char ipstr2[4096];
@@ -86,9 +85,9 @@ e_start(t_opts * opts)
     icmp_hdr = NULL;
     ft_bzero(&packdata, PACK_SIZE);
 
-    if ((getaddrinfo(lookup, NULL, &hints, &res)) < 0)
+    if ((getaddrinfo(url, NULL, &hints, &res)) < 0)
     {
-        return (u_printerr("lookup failed", lookup));
+        return (u_printerr("lookup failed", url));
     }
 
     if (res != NULL)

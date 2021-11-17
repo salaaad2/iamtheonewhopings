@@ -10,6 +10,6 @@
 #define PAD_DATA "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 
 int e_help( void );
-int e_start(t_elem * node, t_opts * opts);
+int e_start(char * url, t_opts * opts);
 
 #endif
