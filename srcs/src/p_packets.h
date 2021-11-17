@@ -9,6 +9,6 @@
 #include "e_ping.h"
 
 int     p_initpacket(t_pack * pack);
-int16_t p_checksum(const void *data, size_t size);
+int16_t p_checksum(const void *data, uint64_t size);
 
 #endif
