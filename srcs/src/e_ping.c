@@ -31,7 +31,7 @@ e_output(char * outbuf, unsigned char verbose)
 }
 
 int
-e_setsockets()
+e_setsockets(void)
 {
     const int hdr = 1;
     int sockfd;
@@ -50,14 +50,13 @@ e_setsockets()
 }
 
 char *
-e_ping(int sock, struct sockaddr_in * addr, struct addrinfo *res, char * ipstr)
+e_ping(int sock, struct sockaddr_in * addr, char * packdata, char * ipstr)
 {
     char  response[64];
     socklen_t addrsize = sizeof(const struct sockaddr);
-    (void)res;
     (void)ipstr;
 
-    if (sendto(sock, "ccoolcoolcoo", 11, 0, (struct sockaddr *)addr, addrsize) < 0)
+    if (sendto(sock, packdata, 64, 0, (struct sockaddr *)addr, addrsize) < 0)
     {
         u_printerr("call to sendto() failed", "sendto()");
     }
@@ -110,8 +109,8 @@ e_start(t_elem * node, t_opts * opts)
     }
 
     sock = e_setsockets();
-    p_initpacket(packdata, &icmp_hdr, 1234, 1);
-    e_ping(sock, servaddr, res, ipstr);
+    p_initpacket(packdata, &icmp_hdr, 0);
+    e_ping(sock, servaddr, packdata, ipstr);
 
     freeaddrinfo(res);
 
