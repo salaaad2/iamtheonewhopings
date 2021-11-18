@@ -17,6 +17,10 @@ typedef struct s_pack {
     char load[DATA_SIZE];
 } t_pack ;
 
+typedef struct s_time {
+    int64_t itv, ntv, avg, lapse;
+} t_time ;
+
 
 int e_help( void );
 int e_start(char * url, t_opts * opts);

@@ -43,7 +43,7 @@ e_setsockets(void)
 }
 
 t_pack *
-e_ping(int sock, struct sockaddr_in * addr, t_pack * pack)
+e_ping(int sock, struct sockaddr_in * addr, t_pack * pack, t_time * timer)
 {
     socklen_t addrsize = sizeof(const struct sockaddr);
 
@@ -51,10 +51,13 @@ e_ping(int sock, struct sockaddr_in * addr, t_pack * pack)
     {
         u_printerr("call to sendto() failed", "sendto()");
     }
+    timer->itv = u_timest();
     if (recvfrom(sock, pack, PACK_SIZE, 0, (struct sockaddr *)addr, &addrsize) < 0)
     {
         u_printerr("call to recvfrom() failed", "sendto()");
     }
+    timer->ntv = u_timest();
+    timer->lapse = (timer->ntv - timer->itv);
     return (pack);
 }
 
@@ -72,20 +75,15 @@ e_start(char *url, t_opts * opts)
     };
     char ipstr[4096];
     void * addr;
-
-    seq = 0;
+    t_time timer;
 
     /*
-    ** dns resolution and address settings happen here
+    ** DNS resolution and address settings happen here
     ** */
     if ((getaddrinfo(url, NULL, &hints, &res)) < 0)
     {
         return (u_printerr("lookup failed", url));
     }
-
-    /*
-    ** DNS resolution happens here
-    */
     if (res != NULL)
     {
         servaddr = (struct sockaddr_in *)res->ai_addr;
@@ -102,12 +100,6 @@ e_start(char *url, t_opts * opts)
         return (1);
     }
 
-    /*
-    ** set running semiglobal variable
-    ** */
-    running = 1;
-    u_setrunning(0, &running);
-    signal(SIGINT, handle_sigint); /* u_signal function to stop on SIGINT (C-c) */
 
     /*
     ** socket() and setsockopt()
@@ -117,13 +109,22 @@ e_start(char *url, t_opts * opts)
         return (1);
     }
 
+    /*
+    ** set running semiglobal variable
+    ** */
+    running = 1;
+    u_setrunning(0, &running);
+    signal(SIGINT, handle_sigint);
+
     /* loop : seq is incremented on each ping/pong.
      ** time also needs to be managed each time a ping happens
      ** */
+    seq = 0;
     while (running == 1) {
-        ft_printf("%d", running);
         p_initpacket(&pack, seq++);
-        e_ping(sock, servaddr, &pack);
+        e_ping(sock, servaddr, &pack, &timer);
+        u_printpack(&pack, &timer, ipstr);
+        alarm(1);
     }
 
     /*
