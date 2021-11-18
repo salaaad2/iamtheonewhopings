@@ -20,6 +20,7 @@ SRCS_NAME		 += p_packets
 SRCS_NAME		 += e_ping
 SRCS_NAME		 += u_opts
 SRCS_NAME		 += u_err
+SRCS_NAME		 += u_signal
 #------------------------------------------------------------------------------#
 SRCS			 = $(addprefix ${SRCS_DIR}, $(addsuffix .c, ${SRCS_NAME}))
 #------------------------------------------------------------------------------#

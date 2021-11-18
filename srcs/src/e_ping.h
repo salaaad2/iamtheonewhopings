@@ -12,7 +12,6 @@
 #define DATA_SIZE 56
 #define PACK_SIZE ICMP_SIZE + DATA_SIZE
 
-
 typedef struct s_pack {
     struct icmphdr hdr;
     char load[DATA_SIZE];
