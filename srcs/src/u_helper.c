@@ -15,8 +15,7 @@ u_setrunning(uint8_t mode, uint8_t * running)
 {
     static uint8_t * r;
 
-    if (mode == 0)
-    {
+    if (mode == 0) {
         r = running;
     } else {
         *r = 0;
