@@ -123,8 +123,7 @@ e_start(char *url, t_opts * opts)
     while (running == 1) {
         p_initpacket(&pack, seq++);
         e_ping(sock, servaddr, &pack, &timer);
-        u_printpack(&pack, &timer, ipstr);
-        alarm(1);
+        u_printpack(&pack, &timer, ipstr, seq);
     }
 
     /*
