@@ -3,6 +3,7 @@
 
 #include <sys/time.h>
 
+
 int16_t
 p_checksum(const void *data, size_t size)
 {
@@ -26,7 +27,7 @@ p_checksum(const void *data, size_t size)
 }
 
 int
-p_initpacket(t_pack * pack)
+p_initpacket(t_pack * pack, uint64_t seq)
 {
     uint16_t i = 0;
 
@@ -36,7 +37,7 @@ p_initpacket(t_pack * pack)
     pack->hdr.code = 0;
     pack->hdr.checksum = 0;
     pack->hdr.un.echo.id = getpid();
-    pack->hdr.un.echo.sequence = 0;
+    pack->hdr.un.echo.sequence = seq;
 
     while (i < (DATA_SIZE - 1))
     {

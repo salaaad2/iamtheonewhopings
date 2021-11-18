@@ -10,15 +10,7 @@
 #include "e_ping.h"
 #include "p_packets.h"
 #include "u_err.h"
-#include "u_signal.h"
-
-int
-e_help( void )
-{
-    ft_printf("Usage\n./ft_ping [options] <destination>\n\nOptions:\n");
-    ft_printf(" -v\tverbose output\n");
-    return (0);
-}
+#include "u_helper.h"
 
 int
 e_output(char * outbuf, unsigned char verbose)
@@ -75,17 +67,22 @@ e_start(char *url, t_opts * opts)
     char ipstr[4096];
     void * addr;
     int sock;
+    uint8_t running;
+    uint64_t seq;
     struct addrinfo hints = {
         AI_CANONNAME, AF_INET, SOCK_RAW, IPPROTO_ICMP, 0, NULL, NULL, NULL
     };
 
-    signal(SIGINT, handle_sigint);
+    seq = 0;
 
     if ((getaddrinfo(url, NULL, &hints, &res)) < 0)
     {
         return (u_printerr("lookup failed", url));
     }
 
+    /*
+    ** DNS resolution happens here
+    */
     if (res != NULL)
     {
         servaddr = (struct sockaddr_in *)res->ai_addr;
@@ -101,10 +98,22 @@ e_start(char *url, t_opts * opts)
         return (1);
     }
 
-    sock = e_setsockets();
+    /*
+    ** set running semiglobal variable
+     */
     running = 1;
-    p_initpacket(&pack);
-    while (running) {
+    u_setrunning(0, &running);
+    signal(SIGINT, handle_sigint); /* u_signal function to stop on SIGINT (C-c) */
+    /*
+    ** setsockets returns if it fails
+    */
+    sock = e_setsockets();
+    /* loop : seq is incremented on each ping/pong.
+     * time also needs to be managed each time a ping happens
+     * */
+    while (running == 1) {
+        ft_printf("%d", running);
+        p_initpacket(&pack, seq++);
         e_ping(sock, servaddr, &pack);
     }
 

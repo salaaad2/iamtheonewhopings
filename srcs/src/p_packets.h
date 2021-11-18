@@ -8,7 +8,7 @@
 
 #include "e_ping.h"
 
-int     p_initpacket(t_pack * pack);
+int     p_initpacket(t_pack * pack, uint64_t seq);
 int16_t p_checksum(const void *data, uint64_t size);
 
 #endif
