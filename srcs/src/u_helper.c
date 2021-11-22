@@ -13,6 +13,12 @@ u_handle_sigint(int dummy)
 }
 
 void
+u_handle_sigalrm(int dummy)
+{
+    (void)dummy;
+}
+
+void
 u_setrunning(uint8_t mode, uint8_t * running)
 {
     static uint8_t * r;

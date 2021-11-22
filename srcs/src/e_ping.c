@@ -2,6 +2,7 @@
 /*                       FT_PING whole program's logic                       */
 /*****************************************************************************/
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -138,12 +139,13 @@ e_start(char *url, t_opts * opts)
     seq = 0;
     timer.avg = 0.0f;
     timer.lapse = 0.0f;
-    timer.itv = 0.0f;
     timer.ntv = 0.0f;
+    timer.itv = u_timest();
     while (running == 1) {
-        p_initpacket(&pack, seq++);
-        reply = e_ping(sock, servaddr, &pack, &timer);
-        u_printpack(reply, &timer, ipstr, seq, opts->textaddr);
+            dprintf(1, "%f : %f\n", timer.ntv, u_timest());
+            p_initpacket(&pack, seq++);
+            reply = e_ping(sock, servaddr, &pack, &timer);
+            u_printpack(reply, &timer, ipstr, seq, opts->textaddr);
     }
 
     /*
