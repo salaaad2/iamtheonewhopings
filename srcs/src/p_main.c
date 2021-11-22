@@ -10,6 +10,7 @@
 #include "p_main.h"
 #include "u_opts.h"
 #include "u_err.h"
+#include "u_helper.h"
 #include "e_ping.h"
 
 /*
@@ -51,7 +52,7 @@ int main(int ac, char *av[])
     }
     if (opts->help == 1)
     {
-        return (e_help());
+        return (u_help());
     } else if (url == NULL) {
         return (
             u_printerr("usage error", "Destination address required")

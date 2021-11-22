@@ -42,6 +42,12 @@ e_setsockets(void)
     return (sockfd);
 }
 
+/*
+** sendto icmp header set by p_initpacket()
+** recvfrom IP and ICMP headers and deserialize them
+** t_reply->ip
+** t_reply->icmp
+ */
 t_reply *
 e_ping(int sock, struct sockaddr_in * addr, t_pack * pack, t_time * timer)
 {
@@ -53,12 +59,14 @@ e_ping(int sock, struct sockaddr_in * addr, t_pack * pack, t_time * timer)
 
     if (sendto(sock, pack, PACK_SIZE, 0, (struct sockaddr *)addr, addrsize) < 0)
     {
-        u_printerr("call to sendto() failed", "sendto()");
+        u_printerr("socket error", "sendto()");
+        return (NULL);
     }
     timer->itv = u_timest();
     if (recvfrom(sock, recvbuf, PACK_SIZE + IP_SIZE, 0, (struct sockaddr *)addr, &addrsize) < 0)
     {
-        u_printerr("call to recvfrom() failed", "sendto()");
+        u_printerr("socket error", "recvfrom()");
+        return (NULL);
     }
     timer->ntv = u_timest();
     timer->lapse = (timer->ntv - timer->itv);
@@ -127,9 +135,9 @@ e_start(char *url, t_opts * opts)
      ** */
     seq = 0;
     while (running == 1) {
-        p_initpacket(&pack, seq++);
-        reply = e_ping(sock, servaddr, &pack, &timer);
-        u_printpack(reply, &timer, ipstr, seq);
+            p_initpacket(&pack, seq++);
+            reply = e_ping(sock, servaddr, &pack, &timer);
+            u_printpack(reply, &timer, ipstr, seq);
     }
 
     /*

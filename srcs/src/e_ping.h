@@ -25,11 +25,10 @@ typedef struct s_reply {
 } t_reply;
 
 typedef struct s_time {
-    int64_t itv, ntv, avg, lapse;
+    double itv, ntv, avg, lapse;
 } t_time ;
 
 
-int e_help( void );
 int e_start(char * url, t_opts * opts);
 
 #endif

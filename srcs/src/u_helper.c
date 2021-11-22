@@ -3,6 +3,8 @@
 /*****************************************************************************/
 #include "u_helper.h"
 
+#include <stdio.h>
+
 void
 handle_sigint(int dummy)
 {
@@ -22,26 +24,26 @@ u_setrunning(uint8_t mode, uint8_t * running)
     }
 }
 
-long
+double
 u_timest(void)
 {
     struct timeval tv;
-    long ct;
+    double secs;
 
     gettimeofday(&tv, NULL);
-    ct = ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
-    return (ct);
+    secs = (double)(tv.tv_usec) / 1000;
+    return (secs);
 }
 
-long
-u_cmptime(long time)
+double
+u_cmptime(double time)
 {
     return (time < u_timest());
 }
 
 
 int
-e_help( void )
+u_help( void )
 {
     ft_printf("Usage\n./ft_ping [options] <destination>\n\nOptions:\n");
     ft_printf(" -v\tverbose output\n");
@@ -51,6 +53,6 @@ e_help( void )
 int
 u_printpack(t_reply *pack, t_time * timer, char * ipstr, uint64_t seq)
 {
-    ft_dprintf(1, "%ld bytes from %s: icmp_seq=%ld ttl=%d time=%ld\n", sizeof(t_pack), ipstr, seq, pack->ip.ttl, timer->lapse);
+    dprintf(1, "%ld bytes from %s: icmp_seq=%ld ttl=%d time=%f\n", sizeof(t_pack), ipstr, seq, pack->ip.ttl, timer->lapse);
     return (0);
 }
