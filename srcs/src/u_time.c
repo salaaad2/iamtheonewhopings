@@ -1,3 +1,11 @@
+/*********************************/
+/*   FT_PING          (  //      */
+/*   timers            ( )/      */
+/*   by salade         )(/       */
+/*  ________________  ( /)       */
+/* ()__)____________)))))   :^}  */
+/*********************************/
+
 #include "u_time.h"
 
 double
@@ -31,7 +39,7 @@ u_longtime(void)
 double
 u_avgtime(double time)
 {
-   static uint32_t count;
+   static uint32_t count = 0;
    static long double total;
 
    count += 1;

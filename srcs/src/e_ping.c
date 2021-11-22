@@ -1,6 +1,10 @@
-/*****************************************************************************/
-/*                       FT_PING whole program's logic                       */
-/*****************************************************************************/
+/*********************************/
+/*   FT_PING          (  //      */
+/*   logic             ( )/      */
+/*   by salade         )(/       */
+/*  ________________  ( /)       */
+/* ()__)____________)))))   :^}  */
+/*********************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,9 +24,9 @@ e_output(t_reply * reply, t_time * timer, unsigned char verbose)
 {
     ft_printf("--- ft_ping statistics ---(%c)\n", (verbose ? 1 : 0) + 48);
     if (reply) {
-        ft_printf("%d packets transmitted, %d received,  %d packet loss %d time",
+        dprintf(1, "%d packets transmitted, %d received,  %d packet loss %d time\n",
                 reply->hdr.un.echo.sequence, 42, 42, 42);
-        ft_printf("rtt min/avg/max/mdev = %.3f/%.3f/%.3f/%.3f",
+        dprintf(1, "rtt min/avg/max/mdev = %.3f %.3f %.3f %.3f\n",
                 42.0f,42.0f,42.0f,timer->avg);
     }
     return (0);
@@ -121,7 +125,8 @@ e_start(char *url, t_opts * opts)
         return (1);
     }
 
-/* ** socket() and setsockopt()
+    /*
+    ** socket() and setsockopt()
     ** @ret > 0
     ** */
     if ((sock = e_setsockets()) < 0) {
