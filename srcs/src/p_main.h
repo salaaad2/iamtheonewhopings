@@ -13,6 +13,7 @@ typedef struct s_opts {
     bool_t	verbose;
     bool_t	help;
     bool_t	noopt;
+    bool_t	textaddr;
 } t_opts;
 
 #endif

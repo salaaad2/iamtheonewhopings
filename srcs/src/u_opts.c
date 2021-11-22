@@ -7,6 +7,7 @@ u_initopts( void ) {
     if (ret != NULL) {
         ret->verbose = 0;
         ret->help = 0;
+        ret->textaddr = 0;
     }
     return (ret);
 }

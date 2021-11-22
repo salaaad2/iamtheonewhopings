@@ -103,20 +103,19 @@ e_start(char *url, t_opts * opts)
         servaddr = (struct sockaddr_in *)res->ai_addr;
         addr = &(servaddr->sin_addr);
         inet_ntop(res->ai_family, addr, ipstr, sizeof(ipstr));
-        ft_printf("ip4: %s\n", ipstr);
+        ft_printf("PING  (%s) %d(%ld)\n", ipstr, DATA_SIZE, PACK_SIZE);
         if (!ft_strcmp(ipstr, url)) {
-            ft_printf("mysterious\n");
+            ft_printf("\n");
+            opts->textaddr = 1;
         } else {
-            ft_printf("cool\n");
+            opts->textaddr = 0;
             /* return (u_printerr("invalid address", ipstr)); */
         }
     } else {
         return (1);
     }
 
-
-    /*
-    ** socket() and setsockopt()
+/* ** socket() and setsockopt()
     ** @ret > 0
     ** */
     if ((sock = e_setsockets()) < 0) {
@@ -137,7 +136,7 @@ e_start(char *url, t_opts * opts)
     while (running == 1) {
             p_initpacket(&pack, seq++);
             reply = e_ping(sock, servaddr, &pack, &timer);
-            u_printpack(reply, &timer, ipstr, seq);
+            u_printpack(reply, &timer, ipstr, seq, opts->textaddr);
     }
 
     /*
