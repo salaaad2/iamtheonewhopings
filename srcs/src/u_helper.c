@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 void
-handle_sigint(int dummy)
+u_handle_sigint(int dummy)
 {
     (void)dummy;
     u_setrunning(1, NULL);
@@ -23,24 +23,6 @@ u_setrunning(uint8_t mode, uint8_t * running)
         *r = 0;
     }
 }
-
-double
-u_timest(void)
-{
-    struct timeval tv;
-    double secs;
-
-    gettimeofday(&tv, NULL);
-    secs = (double)(tv.tv_usec) / 1000;
-    return (secs);
-}
-
-double
-u_cmptime(double time)
-{
-    return (time < u_timest());
-}
-
 
 int
 u_help( void )

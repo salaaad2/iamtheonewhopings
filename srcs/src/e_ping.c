@@ -2,6 +2,7 @@
 /*                       FT_PING whole program's logic                       */
 /*****************************************************************************/
 
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -9,16 +10,19 @@
 
 #include "e_ping.h"
 #include "p_packets.h"
+#include "u_time.h"
 #include "u_err.h"
 #include "u_helper.h"
 
 int
-e_output(t_reply * reply, unsigned char verbose)
+e_output(t_reply * reply, t_time * timer, unsigned char verbose)
 {
     ft_printf("--- ft_ping statistics ---(%c)\n", (verbose ? 1 : 0) + 48);
     if (reply) {
         ft_printf("%d packets transmitted, %d received,  %d packet loss %d time",
                 reply->hdr.un.echo.sequence, 42, 42, 42);
+        ft_printf("rtt min/avg/max/mdev = %.3f/%.3f/%.3f/%.3f",
+                42.0f,42.0f,42.0f,timer->avg);
     }
     return (0);
 }
@@ -68,8 +72,7 @@ e_ping(int sock, struct sockaddr_in * addr, t_pack * pack, t_time * timer)
         u_printerr("socket error", "recvfrom()");
         return (NULL);
     }
-    timer->ntv = u_timest();
-    timer->lapse = (timer->ntv - timer->itv);
+    u_updatetime(u_timest(), timer);
     full = p_deserialize(recvbuf);
     return (full);
 }
@@ -127,22 +130,28 @@ e_start(char *url, t_opts * opts)
     ** */
     running = 1;
     u_setrunning(0, &running);
-    signal(SIGINT, handle_sigint);
+    signal(SIGINT, u_handle_sigint);
 
     /* loop : seq is incremented on each ping/pong.
      ** time also needs to be managed each time a ping happens
      ** */
     seq = 0;
+    timer.avg = 0.0f;
+    timer.lapse = 0.0f;
+    timer.itv = 0.0f;
+    timer.ntv = 0.0f;
     while (running == 1) {
-            p_initpacket(&pack, seq++);
-            reply = e_ping(sock, servaddr, &pack, &timer);
-            u_printpack(reply, &timer, ipstr, seq, opts->textaddr);
+        p_initpacket(&pack, seq++);
+        reply = e_ping(sock, servaddr, &pack, &timer);
+        u_printpack(reply, &timer, ipstr, seq, opts->textaddr);
     }
 
     /*
     ** TODO: print stats when exiting
     ** */
-    e_output(reply, opts->verbose);
+    e_output(reply, &timer, opts->verbose);
     freeaddrinfo(res);
+    free(opts);
+    free(reply);
     return (0);
 }

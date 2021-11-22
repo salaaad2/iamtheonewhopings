@@ -4,6 +4,7 @@
 t_opts *
 u_initopts( void ) {
     t_opts * ret = malloc(sizeof(t_opts));
+
     if (ret != NULL) {
         ret->verbose = 0;
         ret->help = 0;

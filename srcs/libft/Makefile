@@ -168,14 +168,14 @@ ${NAME}: ${OBJS}
 #------------------------------------------------------------------------------#
 all: ${OBJS_DIR} ${NAME}
 #------------------------------------------------------------------------------#
-debug: CFLAGS += -glldb
+debug: CFLAGS += -g3
 debug: all
 #------------------------------------------------------------------------------#
-asan: CFLAGS += -glldb
+asan: CFLAGS += -g3
 asan: CFLAGS += -fsanitize=address
 asan: all
 #------------------------------------------------------------------------------#
-msan: CFLAGS += -glldb
+msan: CFLAGS += -g3
 msan: CFLAGS += -fsanitize=memory
 msan: CFLAGS += -fsanitize-memory-track-origins
 msan: CFLAGS += -fno-common

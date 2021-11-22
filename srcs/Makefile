@@ -18,6 +18,7 @@ LFT_SRCS_DIR	 = ${LFT_DIR}src/
 SRCS_NAME		 = p_main
 SRCS_NAME		 += p_packets
 SRCS_NAME		 += e_ping
+SRCS_NAME		 += u_time
 SRCS_NAME		 += u_opts
 SRCS_NAME		 += u_err
 SRCS_NAME		 += u_helper
@@ -78,16 +79,16 @@ $(NAME): ${OBJS} ${LFT_SRCS} ${LFT_INCS_DIR}libft.h
 #------------------------------------------------------------------------------#
 all: ${OBJS_DIR} ${NAME}
 #------------------------------------------------------------------------------#
-debug: CFLAGS += -glldb
+debug: CFLAGS += -g3
 debug: LFTRULE = debug
 debug: all
 #------------------------------------------------------------------------------#
-asan: CFLAGS += -glldb
+asan: CFLAGS += -g3
 asan: CFLAGS += -fsanitize=address
 asan: LFTRULE = asan
 asan: all
 #------------------------------------------------------------------------------#
-msan: CFLAGS += -glldb
+msan: CFLAGS += -g3
 msan: CFLAGS += -fsanitize=memory
 msan: CFLAGS += -fsanitize-memory-track-origins
 msan: CFLAGS += -fno-common

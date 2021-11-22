@@ -70,6 +70,6 @@ p_deserialize(char recvbuf[])
     }
 
     ft_memcpy(&reply->ip, recvbuf, 20);
-    ft_memcpy(&reply->hdr, recvbuf + 20, (98 - 20));
+    ft_memcpy(&reply->hdr, recvbuf + 20, 64);
     return (reply);
 }
