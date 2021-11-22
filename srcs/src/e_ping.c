@@ -83,12 +83,41 @@ e_ping(int sock, struct sockaddr_in * addr, t_pack * pack, t_time * timer)
 }
 
 int
+e_loop(t_ping * ping, struct sockaddr_in * servaddr, t_opts * opts, int sock)
+{
+    uint8_t running;
+    long reptime;
+    uint8_t seq;
+
+    /*
+    ** set running semiglobal variable
+    ** */
+    running = 1;
+    u_setrunning(0, &running);
+    signal(SIGINT, u_handle_sigint);
+
+    reptime = 0;
+    seq = 0;
+    while (running == 1) {
+        if ((reptime + 1000) > u_longtime())
+        {
+            continue; /* ping once every second */
+        } else {
+            p_initpacket(ping->pack, seq++);
+            ping->reply = e_ping(sock, servaddr, ping->pack, ping->timer);
+            u_printpack(ping->reply, ping->timer, ping->ipstr, seq, opts->textaddr);
+            reptime = u_longtime();
+        }
+    }
+    return (0);
+}
+
+
+int
 e_start(char *url, t_opts * opts)
 {
     struct sockaddr_in * servaddr;
     struct addrinfo * res;
-    uint64_t seq;
-    uint8_t running;
     t_pack pack;
     int sock;
     struct addrinfo hints = {
@@ -98,14 +127,13 @@ e_start(char *url, t_opts * opts)
     void * addr;
     t_time timer;
     t_reply * reply;
-    long reptime;
+    t_ping ping;
 
-    reptime = 0;
+    reply = NULL;
     /*
     ** DNS resolution and address settings happen here
     ** */
-    if ((getaddrinfo(url, NULL, &hints, &res)) < 0)
-    {
+    if ((getaddrinfo(url, NULL, &hints, &res)) < 0) {
         return (u_printerr("lookup failed", url));
     }
     if (res != NULL)
@@ -136,40 +164,17 @@ e_start(char *url, t_opts * opts)
         return (1);
     }
 
-    /*
-    ** set running semiglobal variable
-    ** */
-    running = 1;
-    u_setrunning(0, &running);
-    signal(SIGINT, u_handle_sigint);
-
     /* loop : seq is incremented on each ping/pong.
      ** time also needs to be managed each time a ping happens
      ** */
-    seq = 0;
-    timer.avg = 0.0f;
-    timer.lapse = 0.0f;
-    timer.ntv = 0.0f;
-    timer.min = 0.0f;
-    timer.max = 0.0f;
-    timer.mdev = 0.0f;
-    timer.itv = u_timest();
-    while (running == 1) {
-        if ((reptime + 1000) > u_longtime())
-        {
-            continue; /* ping once every second */
-        } else {
-            p_initpacket(&pack, seq++);
-            reply = e_ping(sock, servaddr, &pack, &timer);
-            u_printpack(reply, &timer, ipstr, seq, opts->textaddr);
-            reptime = u_longtime();
-        }
-    }
+    u_inittimer(&timer);
+    p_initping(&ping, &timer, &pack, reply, ipstr);
+    e_loop(&ping,servaddr, opts, sock);
 
     /*
     ** TODO: print stats when exiting
     ** */
-    e_output(reply, &timer, opts->verbose);
+    e_output(ping.reply, ping.timer, opts->verbose);
     freeaddrinfo(res);
     free(opts);
     free(reply);

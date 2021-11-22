@@ -73,3 +73,17 @@ p_deserialize(char recvbuf[])
     ft_memcpy(&reply->hdr, recvbuf + 20, 64);
     return (reply);
 }
+
+/*
+** set all t_ping fields
+*/
+void
+p_initping(t_ping * ping, t_time *timer, t_pack * pack, t_reply *reply, char * ipstr)
+{
+    ping->timer = timer;
+    ping->pack = pack;
+    ping->reply = reply;
+    ping->sent = 0;
+    ping->received = 0;                         \
+    ft_memcpy(ping->ipstr, ipstr, 15);
+}

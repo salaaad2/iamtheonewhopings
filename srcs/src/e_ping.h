@@ -28,6 +28,14 @@ typedef struct s_time {
     long double itv, ntv, avg, lapse, min, max, mdev, total;
 } t_time ;
 
+typedef struct s_ping {
+    t_time * timer;
+    t_pack * pack;
+    t_reply * reply;
+    unsigned long sent;
+    unsigned long received;
+    char ipstr[16];
+} t_ping;
 
 int e_start(char * url, t_opts * opts);
 

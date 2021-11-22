@@ -65,3 +65,15 @@ u_updatetime(long double val, t_time * timer)
     }
     return (0);
 }
+
+void
+u_inittimer(t_time * timer)
+{
+    timer->avg = 0.0f;
+    timer->lapse = 0.0f;
+    timer->ntv = 0.0f;
+    timer->min = 0.0f;
+    timer->max = 0.0f;
+    timer->mdev = 0.0f;
+    timer->itv = u_timest();
+}
