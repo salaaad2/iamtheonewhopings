@@ -47,9 +47,9 @@ int
 u_printpack(t_reply *pack, t_time * timer, char * ipstr, uint64_t seq, uint8_t ta)
 {
     if (ta) {
-        dprintf(1, "%ld bytes from %s: icmp_seq=%ld ttl=%d time=%.1f\n", sizeof(t_pack), ipstr, seq, pack->ip.ttl, timer->lapse);
+        dprintf(1, "%ld bytes from %s: icmp_seq=%ld ttl=%d time=%.1Lf\n", sizeof(t_pack), ipstr, seq, pack->ip.ttl, timer->lapse);
     } else {
-        dprintf(1, "%ld bytes from %s: icmp_seq=%ld ttl=%d time=%.1f\n", sizeof(t_pack), ipstr, seq, pack->ip.ttl, timer->lapse);
+        dprintf(1, "%ld bytes from %s: icmp_seq=%ld ttl=%d time=%.1Lf\n", sizeof(t_pack), ipstr, seq, pack->ip.ttl, timer->lapse);
     }
     return (0);
 }

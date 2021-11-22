@@ -6,9 +6,11 @@
 /* ()__)____________)))))   :^}  */
 /*********************************/
 
+#include <stdio.h>
+
 #include "u_time.h"
 
-double
+long double
 u_timest(void)
 {
     struct timeval tv;
@@ -19,8 +21,8 @@ u_timest(void)
     return (secs);
 }
 
-double
-u_cmptime(double time)
+long double
+u_cmptime(long double time)
 {
     return (time < u_timest());
 }
@@ -36,19 +38,19 @@ u_longtime(void)
     return (ct);
 }
 
-double
-u_avgtime(double time)
+long double
+u_avgtime(long double time)
 {
    static uint32_t count = 0;
-   static long double total;
+   static long double total = 0;
 
    count += 1;
    total += time;
-   return (total/time);
+   return (total/count);
 }
 
 int
-u_updatetime(double val, t_time * timer)
+u_updatetime(long double val, t_time * timer)
 {
     timer->ntv = val;
     timer->lapse = (timer->ntv - timer->itv);

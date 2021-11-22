@@ -6,10 +6,10 @@
 
 #include "e_ping.h"
 
-double	u_timest(void);
-double	u_cmptime(double time);
-double	u_avgtime(double time);
+long double	u_timest(void);
+long double	u_cmptime(long double time);
+long double	u_avgtime(long double time);
 long	u_longtime(void);
-int	u_updatetime(double val, t_time * timer);
+int	u_updatetime(long double val, t_time * timer);
 
 #endif

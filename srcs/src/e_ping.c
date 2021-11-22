@@ -26,7 +26,7 @@ e_output(t_reply * reply, t_time * timer, unsigned char verbose)
     if (reply) {
         dprintf(1, "%d packets transmitted, %d received,  %d packet loss %d time\n",
                 reply->hdr.un.echo.sequence, 42, 42, 42);
-        dprintf(1, "rtt min/avg/max/mdev = %.3f %.3f %.3f %.3f\n",
+        dprintf(1, "rtt min/avg/max/mdev = %.3f %.3f %.3f %.3Lf\n",
                 42.0f,42.0f,42.0f,timer->avg);
     }
     return (0);
@@ -114,9 +114,12 @@ e_start(char *url, t_opts * opts)
         addr = &(servaddr->sin_addr);
         inet_ntop(res->ai_family, addr, ipstr, sizeof(ipstr));
         ft_printf("PING  (%s) %d(%ld)\n", ipstr, DATA_SIZE, PACK_SIZE);
-        if (!ft_strcmp(ipstr, url)) {
+        if (ft_strcmp(ipstr, url)) {
             ft_printf("\n");
             opts->textaddr = 1;
+            /*
+            ** reverse hostname if address is not in ipv4 format ???
+             */
         } else {
             opts->textaddr = 0;
             /* return (u_printerr("invalid address", ipstr)); */

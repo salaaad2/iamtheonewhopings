@@ -25,7 +25,7 @@ typedef struct s_reply {
 } t_reply;
 
 typedef struct s_time {
-    double itv, ntv, avg, lapse;
+    long double itv, ntv, avg, lapse;
 } t_time ;
 
 
