@@ -94,7 +94,9 @@ e_start(char *url, t_opts * opts)
     void * addr;
     t_time timer;
     t_reply * reply;
+    long reptime;
 
+    reptime = 0;
     /*
     ** DNS resolution and address settings happen here
     ** */
@@ -142,10 +144,16 @@ e_start(char *url, t_opts * opts)
     timer.ntv = 0.0f;
     timer.itv = u_timest();
     while (running == 1) {
-            dprintf(1, "%f : %f\n", timer.ntv, u_timest());
+        if ((reptime + 1000) > u_longtime())
+        {
+            /* dprintf(1, "%f : %f\n", timer.ntv + 1, u_timest()); */
+            continue;
+        } else {
             p_initpacket(&pack, seq++);
             reply = e_ping(sock, servaddr, &pack, &timer);
             u_printpack(reply, &timer, ipstr, seq, opts->textaddr);
+            reptime = u_longtime();
+        }
     }
 
     /*

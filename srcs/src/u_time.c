@@ -17,6 +17,17 @@ u_cmptime(double time)
     return (time < u_timest());
 }
 
+long
+u_longtime(void)
+{
+    struct timeval	tv;
+    long			ct;
+
+    gettimeofday(&tv, NULL);
+    ct = ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+    return (ct);
+}
+
 double
 u_avgtime(double time)
 {
