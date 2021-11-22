@@ -31,6 +31,7 @@ int main(int ac, char *av[])
         );
     }
 
+    url = NULL;
     i = 1;
     opts = u_initopts();
     while (i < ac)

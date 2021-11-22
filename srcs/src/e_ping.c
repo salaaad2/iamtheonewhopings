@@ -56,6 +56,7 @@ e_ping(int sock, struct sockaddr_in * addr, t_pack * pack, t_time * timer)
     {
         u_printerr("call to recvfrom() failed", "sendto()");
     }
+    ft_printf("%s\n",  (int)*pack);
     timer->ntv = u_timest();
     timer->lapse = (timer->ntv - timer->itv);
     return (pack);
@@ -124,6 +125,7 @@ e_start(char *url, t_opts * opts)
         p_initpacket(&pack, seq++);
         e_ping(sock, servaddr, &pack, &timer);
         u_printpack(&pack, &timer, ipstr, seq);
+        usleep(1000); /* TODO: usleep forbiden */
     }
 
     /*
