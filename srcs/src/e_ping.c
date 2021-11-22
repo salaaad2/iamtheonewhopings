@@ -22,12 +22,12 @@
 int
 e_output(t_reply * reply, t_time * timer, unsigned char verbose)
 {
-    ft_printf("--- ft_ping statistics ---(%c)\n", (verbose ? 1 : 0) + 48);
+    ft_printf("\n--- ft_ping statistics ---(%c)\n", (verbose ? 1 : 0) + 48);
     if (reply) {
         dprintf(1, "%d packets transmitted, %d received,  %d packet loss %d time\n",
                 reply->hdr.un.echo.sequence, 42, 42, 42);
-        dprintf(1, "rtt min/avg/max/mdev = %.3f %.3f %.3f %.3Lf\n",
-                42.0f,42.0f,42.0f,timer->avg);
+        dprintf(1, "rtt min/avg/max/mdev = %.3Lf/%.3Lf/%.3Lf/%.3Lf ms\n",
+                timer->min,timer->avg,timer->max,timer->avg);
     }
     return (0);
 }
@@ -66,14 +66,14 @@ e_ping(int sock, struct sockaddr_in * addr, t_pack * pack, t_time * timer)
 
     ft_bzero(recvbuf, 98);
 
-    if (sendto(sock, pack, PACK_SIZE, 0, (struct sockaddr *)addr, addrsize) < 0)
-    {
+    if (sendto(sock, pack, PACK_SIZE, 0, (struct sockaddr *)addr, addrsize) < 0) {
         u_printerr("socket error", "sendto()");
         return (NULL);
     }
+
     timer->itv = u_timest();
-    if (recvfrom(sock, recvbuf, PACK_SIZE + IP_SIZE, 0, (struct sockaddr *)addr, &addrsize) < 0)
-    {
+
+    if (recvfrom(sock, recvbuf, PACK_SIZE + IP_SIZE, 0, (struct sockaddr *)addr, &addrsize) < 0) {
         u_printerr("socket error", "recvfrom()");
         return (NULL);
     }
@@ -150,12 +150,14 @@ e_start(char *url, t_opts * opts)
     timer.avg = 0.0f;
     timer.lapse = 0.0f;
     timer.ntv = 0.0f;
+    timer.min = 0.0f;
+    timer.max = 0.0f;
+    timer.mdev = 0.0f;
     timer.itv = u_timest();
     while (running == 1) {
         if ((reptime + 1000) > u_longtime())
         {
-            /* dprintf(1, "%f : %f\n", timer.ntv + 1, u_timest()); */
-            continue;
+            continue; /* ping once every second */
         } else {
             p_initpacket(&pack, seq++);
             reply = e_ping(sock, servaddr, &pack, &timer);

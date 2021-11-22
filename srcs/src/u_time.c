@@ -55,5 +55,13 @@ u_updatetime(long double val, t_time * timer)
     timer->ntv = val;
     timer->lapse = (timer->ntv - timer->itv);
     timer->avg = u_avgtime(timer->lapse);
+    if (timer->lapse > timer->max) {
+        timer->max = timer->lapse;
+        if (timer->min == 0.0f) {
+            timer->min = timer->max;
+        }
+    } else if (timer->lapse < timer->min) {
+        timer->min = timer->lapse;
+    }
     return (0);
 }
