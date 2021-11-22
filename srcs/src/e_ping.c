@@ -13,12 +13,12 @@
 #include "u_helper.h"
 
 int
-e_output(char * outbuf, unsigned char verbose)
+e_output(t_reply * reply, unsigned char verbose)
 {
-    if (verbose) {
-        ft_printf("%s verbose", outbuf);
-    } else {
-        ft_printf("%s", outbuf);
+    ft_printf("--- ft_ping statistics ---(%c)\n", (verbose ? 1 : 0) + 48);
+    if (reply) {
+        ft_printf("%d packets transmitted, %d received,  %d packet loss %d time",
+                reply->hdr.un.echo.sequence, 42, 42, 42);
     }
     return (0);
 }
@@ -42,24 +42,28 @@ e_setsockets(void)
     return (sockfd);
 }
 
-t_pack *
+t_reply *
 e_ping(int sock, struct sockaddr_in * addr, t_pack * pack, t_time * timer)
 {
     socklen_t addrsize = sizeof(const struct sockaddr);
+    char recvbuf[98];
+    t_reply * full;
+
+    ft_bzero(recvbuf, 98);
 
     if (sendto(sock, pack, PACK_SIZE, 0, (struct sockaddr *)addr, addrsize) < 0)
     {
         u_printerr("call to sendto() failed", "sendto()");
     }
     timer->itv = u_timest();
-    if (recvfrom(sock, pack, PACK_SIZE, 0, (struct sockaddr *)addr, &addrsize) < 0)
+    if (recvfrom(sock, recvbuf, PACK_SIZE + IP_SIZE, 0, (struct sockaddr *)addr, &addrsize) < 0)
     {
         u_printerr("call to recvfrom() failed", "sendto()");
     }
-    ft_printf("%s\n",  (int)*pack);
     timer->ntv = u_timest();
     timer->lapse = (timer->ntv - timer->itv);
-    return (pack);
+    full = p_deserialize(recvbuf);
+    return (full);
 }
 
 int
@@ -77,6 +81,7 @@ e_start(char *url, t_opts * opts)
     char ipstr[4096];
     void * addr;
     t_time timer;
+    t_reply * reply;
 
     /*
     ** DNS resolution and address settings happen here
@@ -123,15 +128,14 @@ e_start(char *url, t_opts * opts)
     seq = 0;
     while (running == 1) {
         p_initpacket(&pack, seq++);
-        e_ping(sock, servaddr, &pack, &timer);
-        u_printpack(&pack, &timer, ipstr, seq);
-        usleep(1000); /* TODO: usleep forbiden */
+        reply = e_ping(sock, servaddr, &pack, &timer);
+        u_printpack(reply, &timer, ipstr, seq);
     }
 
     /*
     ** TODO: print stats when exiting
     ** */
-    e_output("null", opts->verbose);
+    e_output(reply, opts->verbose);
     freeaddrinfo(res);
     return (0);
 }

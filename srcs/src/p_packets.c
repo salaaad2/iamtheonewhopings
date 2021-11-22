@@ -48,3 +48,28 @@ p_initpacket(t_pack * pack, uint64_t seq)
     pack->hdr.checksum = p_checksum(pack, PACK_SIZE);
     return (0);
 }
+
+/*
+** recvfrom 98 bytes after sending 64.
+** this increased size allows us to get the ip header from the received packet.
+** very cool.
+*/
+t_reply *
+p_deserialize(char recvbuf[])
+{
+    static t_reply * reply;
+
+    if (reply == NULL)
+    {
+        reply = ft_calloc(1, sizeof(t_reply));
+        if (reply == NULL)
+        {
+            u_printerr("fatal errorr", "calloc()");
+            return (reply);
+        }
+    }
+
+    ft_memcpy(&reply->ip, recvbuf, 20);
+    ft_memcpy(&reply->hdr, recvbuf + 20, (98 - 20));
+    return (reply);
+}

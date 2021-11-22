@@ -49,8 +49,8 @@ e_help( void )
 }
 
 int
-u_printpack(t_pack *pack, t_time * timer, char * ipstr, uint64_t seq)
+u_printpack(t_reply *pack, t_time * timer, char * ipstr, uint64_t seq)
 {
-    ft_dprintf(1, "%ld bytes from %s: icmp_seq=%ld ttl= time=%ld\n", sizeof(*pack), ipstr, seq, timer->lapse);
+    ft_dprintf(1, "%ld bytes from %s: icmp_seq=%ld ttl=%d time=%ld\n", sizeof(t_pack), ipstr, seq, pack->ip.ttl, timer->lapse);
     return (0);
 }

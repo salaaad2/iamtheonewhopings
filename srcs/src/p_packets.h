@@ -8,7 +8,8 @@
 
 #include "e_ping.h"
 
-int     p_initpacket(t_pack * pack, uint64_t seq);
-int16_t p_checksum(const void *data, uint64_t size);
+int       p_initpacket(t_pack * pack, uint64_t seq);
+int16_t   p_checksum(const void *data, uint64_t size);
+t_reply * p_deserialize(char recvbuf[]);
 
 #endif
