@@ -20,14 +20,14 @@
 #include "u_helper.h"
 
 int
-e_output(t_reply * reply, t_time * timer, unsigned char verbose)
+e_output(t_ping * ping, unsigned char verbose)
 {
     ft_printf("\n--- ft_ping statistics ---(%c)\n", (verbose ? 1 : 0) + 48);
-    if (reply) {
-        dprintf(1, "%d packets transmitted, %d received,  %d packet loss %d time\n",
-                reply->hdr.un.echo.sequence, 42, 42, 42);
+    if (ping->reply) {
+        dprintf(1, "%ld packets transmitted, %ld received,  %ld packet loss %Lf time\n",
+                ping->sent, ping->received, (100 * ping->received / ping->sent), ping->timer->total);
         dprintf(1, "rtt min/avg/max/mdev = %.3Lf/%.3Lf/%.3Lf/%.3Lf ms\n",
-                timer->min,timer->avg,timer->max,timer->avg);
+                ping->timer->min,ping->timer->avg,ping->timer->max,u_mdev(1, 0.0f));
     }
     return (0);
 }
@@ -58,11 +58,13 @@ e_setsockets(void)
 ** t_reply->icmp
  */
 t_reply *
-e_ping(int sock, struct sockaddr_in * addr, t_pack * pack, t_time * timer)
+e_ping(int sock, struct sockaddr_in * addr, t_ping * ping)
 {
     socklen_t addrsize = sizeof(const struct sockaddr);
     char recvbuf[98];
     t_reply * full;
+    t_pack * pack = ping->pack;
+    t_time * timer = ping->timer;
 
     ft_bzero(recvbuf, 98);
 
@@ -70,13 +72,13 @@ e_ping(int sock, struct sockaddr_in * addr, t_pack * pack, t_time * timer)
         u_printerr("socket error", "sendto()");
         return (NULL);
     }
-
+    ping->sent++;
     timer->itv = u_timest();
-
     if (recvfrom(sock, recvbuf, PACK_SIZE + IP_SIZE, 0, (struct sockaddr *)addr, &addrsize) < 0) {
         u_printerr("socket error", "recvfrom()");
         return (NULL);
     }
+    ping->received++;
     u_updatetime(u_timest(), timer);
     full = p_deserialize(recvbuf);
     return (full);
@@ -104,8 +106,8 @@ e_loop(t_ping * ping, struct sockaddr_in * servaddr, t_opts * opts, int sock)
             continue; /* ping once every second */
         } else {
             p_initpacket(ping->pack, seq++);
-            ping->reply = e_ping(sock, servaddr, ping->pack, ping->timer);
-            u_printpack(ping->reply, ping->timer, ping->ipstr, seq, opts->textaddr);
+            ping->reply = e_ping(sock, servaddr, ping);
+            u_printpack(ping, seq, opts->textaddr);
             reptime = u_longtime();
         }
     }
@@ -134,7 +136,7 @@ e_start(char *url, t_opts * opts)
     ** DNS resolution and address settings happen here
     ** */
     if ((getaddrinfo(url, NULL, &hints, &res)) < 0) {
-        return (u_printerr("lookup failed", url));
+        return (u_printerr(url, "Name or service not known"));
     }
     if (res != NULL)
     {
@@ -145,6 +147,7 @@ e_start(char *url, t_opts * opts)
         if (ft_strcmp(ipstr, url)) {
             ft_printf("\n");
             opts->textaddr = 1;
+            ping.url = url;
             /*
             ** reverse hostname if address is not in ipv4 format ???
              */
@@ -174,7 +177,7 @@ e_start(char *url, t_opts * opts)
     /*
     ** TODO: print stats when exiting
     ** */
-    e_output(ping.reply, ping.timer, opts->verbose);
+    e_output(&ping, opts->verbose);
     freeaddrinfo(res);
     free(opts);
     free(reply);

@@ -35,6 +35,7 @@ typedef struct s_ping {
     unsigned long sent;
     unsigned long received;
     char ipstr[16];
+    char * url;
 } t_ping;
 
 int e_start(char * url, t_opts * opts);
