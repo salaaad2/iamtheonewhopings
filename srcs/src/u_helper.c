@@ -10,6 +10,17 @@
 
 #include <stdio.h>
 
+uint32_t
+u_ploss(uint32_t sent, uint32_t received)
+{
+    uint32_t ret;
+
+    ret = 100;
+    ret *= sent;
+    ret /= received;
+    return (ret - 100);
+}
+
 void
 u_handle_sigint(int dummy)
 {
@@ -47,9 +58,9 @@ int
 u_printpack(t_ping *ping, uint64_t seq, uint8_t ta)
 {
     if (ta) {
-        dprintf(1, "%ld bytes from %s (%s): icmp_seq=%ld ttl=%d time=%.1Lf\n", sizeof(t_pack), ping->url, ping->ipstr, seq, ping->reply->ip.ttl, ping->timer->lapse);
+        dprintf(1, "%ld bytes from %s (%s): icmp_seq=%ld ttl=%d time=%.3Lf\n", sizeof(t_pack), ping->url, ping->ipstr, seq, ping->reply->ip.ttl, ping->timer->lapse);
     } else {
-        dprintf(1, "%ld bytes from %s: icmp_seq=%ld ttl=%d time=%.1Lf\n", sizeof(t_pack), ping->ipstr, seq, ping->reply->ip.ttl, ping->timer->lapse);
+        dprintf(1, "%ld bytes from %s: icmp_seq=%ld ttl=%d time=%.3Lf\n", sizeof(t_pack), ping->ipstr, seq, ping->reply->ip.ttl, ping->timer->lapse);
     }
     return (0);
 }

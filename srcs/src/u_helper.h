@@ -8,6 +8,7 @@
 
 #include "e_ping.h"
 
+uint32_t u_ploss(uint32_t sent, uint32_t received);
 void u_handle_sigint(int dummy);
 void u_handle_sigalrm(int dummy);
 void u_setrunning(uint8_t mode, uint8_t * running);

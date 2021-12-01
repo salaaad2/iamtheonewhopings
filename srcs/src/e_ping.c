@@ -20,12 +20,17 @@
 #include "u_helper.h"
 
 int
-e_output(t_ping * ping, unsigned char verbose)
+e_output(t_ping * ping, uint8_t isstr)
 {
-    ft_printf("\n--- ft_ping statistics ---(%c)\n", (verbose ? 1 : 0) + 48);
+    uint32_t ploss;
+    char * str = (isstr ? ping->url : ping->ipstr);
+
+    ploss = u_ploss(ping->sent, ping->received);
+    ft_printf("\n--- %s ft_ping statistics ---\n", str);
+
     if (ping->reply) {
-        dprintf(1, "%ld packets transmitted, %ld received,  %ld packet loss %Lf time\n",
-                ping->sent, ping->received, (100 * ping->received / ping->sent), ping->timer->total);
+        dprintf(1, "%ld packets transmitted, %ld received,  %ld%% packet loss\n",
+                ping->sent, ping->received, ploss);
         dprintf(1, "rtt min/avg/max/mdev = %.3Lf/%.3Lf/%.3Lf/%.3Lf ms\n",
                 ping->timer->min,ping->timer->avg,ping->timer->max,u_mdev(1, 0.0f));
     }
@@ -177,7 +182,7 @@ e_start(char *url, t_opts * opts)
     /*
     ** TODO: print stats when exiting
     ** */
-    e_output(&ping, opts->verbose);
+    e_output(&ping, ft_strcmp(ipstr, url));
     freeaddrinfo(res);
     free(opts);
     free(reply);
