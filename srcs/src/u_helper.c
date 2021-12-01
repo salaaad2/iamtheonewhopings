@@ -55,12 +55,8 @@ u_help( void )
 }
 
 int
-u_printpack(t_ping *ping, uint64_t seq, uint8_t ta)
+u_printpack(t_ping *ping, uint64_t seq)
 {
-    if (ta) {
-        dprintf(1, "%ld bytes from %s (%s): icmp_seq=%ld ttl=%d time=%.3Lf\n", sizeof(t_pack), ping->url, ping->ipstr, seq, ping->reply->ip.ttl, ping->timer->lapse);
-    } else {
-        dprintf(1, "%ld bytes from %s: icmp_seq=%ld ttl=%d time=%.3Lf\n", sizeof(t_pack), ping->ipstr, seq, ping->reply->ip.ttl, ping->timer->lapse);
-    }
+    dprintf(1, "%ld bytes from %s: seq=%ld ttl=%d time=%.3Lf\n", sizeof(t_pack), ping->ipstr, seq, ping->reply->ip.ttl, ping->timer->lapse);
     return (0);
 }

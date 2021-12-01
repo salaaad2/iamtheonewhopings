@@ -31,8 +31,8 @@ e_output(t_ping * ping, uint8_t isstr)
     if (ping->reply) {
         dprintf(1, "%ld packets transmitted, %ld received,  %ld%% packet loss\n",
                 ping->sent, ping->received, ploss);
-        dprintf(1, "rtt min/avg/max/mdev = %.3Lf/%.3Lf/%.3Lf/%.3Lf ms\n",
-                ping->timer->min,ping->timer->avg,ping->timer->max,u_mdev(1, 0.0f));
+        dprintf(1, "round-trip min/avg/max/mdev = %.3Lf/%.3Lf/%.3Lf/%.3Lf ms\n",
+                ping->timer->min,ping->timer->avg,ping->timer->max,u_mdev(1, 1.0f));
     }
     return (0);
 }
@@ -42,7 +42,11 @@ e_setsockets(void)
 {
     const int hdr = 1;
     int sockfd;
+    struct timeval rcv_timeout =
+        {1, 1};
 
+    rcv_timeout.tv_sec = 1;
+    rcv_timeout.tv_usec = 0;
     if ((sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)) < 0)
     {
         return (u_printerr("failed to create socket", "socket"));
@@ -53,10 +57,20 @@ e_setsockets(void)
         sockfd = -1;
         return (u_printerr("failed to set socket options", "setsockopt"));
     }
+    if ((setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &rcv_timeout, sizeof(rcv_timeout))) != 0)
+    {
+        ft_printf("%s %d\n", strerror(errno), errno);
+        sockfd = -1;
+        return (u_printerr("failed to set socket options", "setsockopt"));
+    }
     return (sockfd);
 }
 
 /*
+    struct timeval rcv_timeout = {gdata.recv_timeout / 1000, 1000 * (gdata.recv_timeout % 1000)};
+    if (setsockopt(sktfd, SOL_SOCKET, SO_RCVTIMEO, (char *)&rcv_timeout, sizeof(rcv_timeout)) < 0)
+        perror(NULL), freexit(EXIT_FAILURE);
+
 ** sendto icmp header set by p_initpacket()
 ** recvfrom IP and ICMP headers and deserialize them
 ** t_reply->ip
@@ -70,6 +84,7 @@ e_ping(int sock, struct sockaddr_in * addr, t_ping * ping)
     t_reply * full;
     t_pack * pack = ping->pack;
     t_time * timer = ping->timer;
+    int ret = 42;
 
     ft_bzero(recvbuf, 98);
 
@@ -79,8 +94,9 @@ e_ping(int sock, struct sockaddr_in * addr, t_ping * ping)
     }
     ping->sent++;
     timer->itv = u_timest();
-    if (recvfrom(sock, recvbuf, PACK_SIZE + IP_SIZE, 0, (struct sockaddr *)addr, &addrsize) < 0) {
-        u_printerr("socket error", "recvfrom()");
+    if ((ret = recvfrom(sock, recvbuf, PACK_SIZE + IP_SIZE, 0, (struct sockaddr *)addr, &addrsize)) < 0) {
+        u_updatetime(u_timest(), timer);
+        ft_printf("%d\n", ret);
         return (NULL);
     }
     ping->received++;
@@ -90,7 +106,7 @@ e_ping(int sock, struct sockaddr_in * addr, t_ping * ping)
 }
 
 int
-e_loop(t_ping * ping, struct sockaddr_in * servaddr, t_opts * opts, int sock)
+e_loop(t_ping * ping, struct sockaddr_in * servaddr, int sock)
 {
     uint8_t running;
     long reptime;
@@ -110,10 +126,14 @@ e_loop(t_ping * ping, struct sockaddr_in * servaddr, t_opts * opts, int sock)
         {
             continue; /* ping once every second */
         } else {
-            p_initpacket(ping->pack, seq++);
+            p_initpacket(ping->pack, seq);
             ping->reply = e_ping(sock, servaddr, ping);
-            u_printpack(ping, seq, opts->textaddr);
+            if (ping->reply == NULL) {
+                continue;
+            }
+            u_printpack(ping, seq);
             reptime = u_longtime();
+            seq++;
         }
     }
     return (0);
@@ -148,9 +168,7 @@ e_start(char *url, t_opts * opts)
         servaddr = (struct sockaddr_in *)res->ai_addr;
         addr = &(servaddr->sin_addr);
         inet_ntop(res->ai_family, addr, ipstr, sizeof(ipstr));
-        ft_printf("PING  (%s) %d(%ld)\n", ipstr, DATA_SIZE, PACK_SIZE);
         if (ft_strcmp(ipstr, url)) {
-            ft_printf("\n");
             opts->textaddr = 1;
             ping.url = url;
             /*
@@ -158,8 +176,10 @@ e_start(char *url, t_opts * opts)
              */
         } else {
             opts->textaddr = 0;
+            ping.url = ipstr;
             /* return (u_printerr("invalid address", ipstr)); */
         }
+        ft_printf("PING %s (%s): %d data bytes\n", url, ipstr, DATA_SIZE);
     } else {
         return (1);
     }
@@ -177,12 +197,12 @@ e_start(char *url, t_opts * opts)
      ** */
     u_inittimer(&timer);
     p_initping(&ping, &timer, &pack, reply, ipstr);
-    e_loop(&ping,servaddr, opts, sock);
+    e_loop(&ping,servaddr, sock);
 
     /*
-    ** TODO: print stats when exiting
+    ** print stats when exiting
     ** */
-    e_output(&ping, ft_strcmp(ipstr, url));
+    e_output(&ping, opts->textaddr);
     freeaddrinfo(res);
     free(opts);
     free(reply);
