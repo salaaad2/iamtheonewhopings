@@ -25,14 +25,20 @@ e_output(t_ping * ping, uint8_t isstr)
     uint32_t ploss;
     char * str = (isstr ? ping->url : ping->ipstr);
 
-    ploss = u_ploss(ping->sent, ping->received);
-    ft_printf("\n--- %s ft_ping statistics ---\n", str);
+    if (ping->received != 0) {
+      ploss = u_ploss(ping->sent, ping->received);
+    } else {
+        ploss = 100;
+    }
 
-    if (ping->reply) {
-        dprintf(1, "%ld packets transmitted, %ld received,  %ld%% packet loss\n",
-                ping->sent, ping->received, ploss);
-        dprintf(1, "round-trip min/avg/max/mdev = %.3Lf/%.3Lf/%.3Lf/%.3Lf ms\n",
-                ping->timer->min,ping->timer->avg,ping->timer->max,u_mdev(1, 1.0f));
+    ft_printf("\n--- %s ft_ping statistics ---\n", str);
+    dprintf(1, "%ld packets transmitted, %ld received,  %ld%% packet loss\n",
+            ping->sent, ping->received, ploss);
+    if (ping->received != 0) {
+        dprintf(1,
+                "round-trip min/avg/max/mdev = %.3Lf/%.3Lf/%.3Lf/%.3Lf ms\n",
+                ping->timer->min, ping->timer->avg, ping->timer->max,
+                u_mdev(1, 1.0f));
     }
     return (0);
 }
@@ -96,7 +102,6 @@ e_ping(int sock, struct sockaddr_in * addr, t_ping * ping)
     timer->itv = u_timest();
     if ((ret = recvfrom(sock, recvbuf, PACK_SIZE + IP_SIZE, 0, (struct sockaddr *)addr, &addrsize)) < 0) {
         u_updatetime(u_timest(), timer);
-        ft_printf("%d\n", ret);
         return (NULL);
     }
     ping->received++;
@@ -153,10 +158,8 @@ e_start(char *url, t_opts * opts)
     char ipstr[4096];
     void * addr;
     t_time timer;
-    t_reply * reply;
     t_ping ping;
 
-    reply = NULL;
     /*
     ** DNS resolution and address settings happen here
     ** */
@@ -196,15 +199,15 @@ e_start(char *url, t_opts * opts)
      ** time also needs to be managed each time a ping happens
      ** */
     u_inittimer(&timer);
-    p_initping(&ping, &timer, &pack, reply, ipstr);
-    e_loop(&ping,servaddr, sock);
+    p_initping(&ping, &timer, &pack, ipstr);
+    e_loop(&ping, servaddr, sock);
 
     /*
     ** print stats when exiting
     ** */
     e_output(&ping, opts->textaddr);
     freeaddrinfo(res);
+    free(ping.reply);
     free(opts);
-    free(reply);
     return (0);
 }

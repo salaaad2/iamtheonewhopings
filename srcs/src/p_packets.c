@@ -59,11 +59,9 @@ p_deserialize(char recvbuf[])
 {
     static t_reply * reply;
 
-    if (reply == NULL)
-    {
+    if (reply == NULL) {
         reply = ft_calloc(1, sizeof(t_reply));
-        if (reply == NULL)
-        {
+        if (reply == NULL) {
             u_printerr("fatal errorr", "calloc()");
             return (reply);
         }
@@ -78,11 +76,11 @@ p_deserialize(char recvbuf[])
 ** set all t_ping fields
 */
 void
-p_initping(t_ping * ping, t_time *timer, t_pack * pack, t_reply *reply, char * ipstr)
+p_initping(t_ping * ping, t_time *timer, t_pack * pack, char * ipstr)
 {
     ping->timer = timer;
     ping->pack = pack;
-    ping->reply = reply;
+    ping->reply = NULL;
     ping->sent = 0;
     ping->received = 0;                         \
     ft_memcpy(ping->ipstr, ipstr, 15);
