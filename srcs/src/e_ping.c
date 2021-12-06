@@ -18,6 +18,7 @@
 #include "u_time.h"
 #include "u_err.h"
 #include "u_helper.h"
+#include "u_libft.h"
 
 int
 e_output(t_ping * ping, uint8_t isstr)
@@ -31,8 +32,8 @@ e_output(t_ping * ping, uint8_t isstr)
         ploss = 100;
     }
 
-    ft_printf("\n--- %s ft_ping statistics ---\n", str);
-    dprintf(1, "%ld packets transmitted, %ld received,  %ld%% packet loss\n",
+    printf("\n--- %s ft_ping statistics ---\n", str);
+    dprintf(1, "%ld packets transmitted, %ld received,  %d%% packet loss\n",
             ping->sent, ping->received, ploss);
     if (ping->received != 0) {
         dprintf(1,
@@ -59,13 +60,13 @@ e_setsockets(void)
     }
     if ((setsockopt(sockfd, SOL_IP, IP_RECVERR, &hdr, sizeof(hdr))) != 0)
     {
-        ft_printf("%s %d\n", strerror(errno), errno);
+        printf("%s %d\n", strerror(errno), errno);
         sockfd = -1;
         return (u_printerr("failed to set socket options", "setsockopt"));
     }
     if ((setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &rcv_timeout, sizeof(rcv_timeout))) != 0)
     {
-        ft_printf("%s %d\n", strerror(errno), errno);
+        printf("%s %d\n", strerror(errno), errno);
         sockfd = -1;
         return (u_printerr("failed to set socket options", "setsockopt"));
     }
@@ -182,7 +183,7 @@ e_start(char *url, t_opts * opts)
             ping.url = ipstr;
             /* return (u_printerr("invalid address", ipstr)); */
         }
-        ft_printf("PING %s (%s): %d data bytes\n", url, ipstr, DATA_SIZE);
+        printf("PING %s (%s): %d data bytes\n", url, ipstr, DATA_SIZE);
     } else {
         return (1);
     }

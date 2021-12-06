@@ -4,7 +4,7 @@
 #include <signal.h>
 #include <stdint.h>
 
-#include "../libft/include/libft.h"
+#include "u_libft.h"
 
 #include "e_ping.h"
 

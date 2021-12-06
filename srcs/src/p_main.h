@@ -5,8 +5,6 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-#include "../libft/include/libft.h"
-
 typedef unsigned char bool_t;
 
 typedef struct s_opts {

@@ -4,7 +4,7 @@
 #include <netinet/ip_icmp.h>
 #include <unistd.h>
 
-#include "../libft/include/libft.h"
+#include "u_libft.h"
 
 #include "e_ping.h"
 

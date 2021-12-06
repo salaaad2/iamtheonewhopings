@@ -1,7 +1,7 @@
 #ifndef U_ERR_H_
 #define U_ERR_H_
 
-#include "../libft/include/libft.h"
+#include "u_libft.h"
 
 #include <errno.h>
 #include <string.h>

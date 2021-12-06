@@ -1,7 +1,7 @@
 #ifndef E_PING_H_
 #define E_PING_H_
 
-#include "../libft/include/libft.h"
+#include "u_libft.h"
 
 #include "p_main.h"
 

@@ -49,8 +49,8 @@ u_setrunning(uint8_t mode, uint8_t * running)
 int
 u_help( void )
 {
-    ft_printf("Usage\n./ft_ping [options] <destination>\n\nOptions:\n");
-    ft_printf(" -v\tverbose output\n");
+    printf("Usage\n./ft_ping [options] <destination>\n\nOptions:\n");
+    printf(" -v\tverbose output\n");
     return (0);
 }
 

@@ -6,11 +6,13 @@
 /* ()__)____________)))))   :^}  */
 /*********************************/
 
+#include <stdio.h>
+
 #include "u_err.h"
 
 int
 u_printerr(char * reason, char * value)
 {
-    ft_dprintf(2, "ft_ping: %s: %s\n[perror:%s]\n", reason, value, strerror(errno));
+    dprintf(2, "ft_ping: %s: %s\n[perror:%s]\n", reason, value, strerror(errno));
     return (1);
 }

@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "../libft/include/libft.h"
+#include "u_libft.h"
 
 #include "p_main.h"
 #include "u_opts.h"
