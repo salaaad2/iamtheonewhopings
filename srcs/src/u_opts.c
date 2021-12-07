@@ -17,6 +17,7 @@ u_initopts( void ) {
         ret->verbose = 0;
         ret->help = 0;
         ret->textaddr = 0;
+        ret->c = -1;
     }
     return (ret);
 }
@@ -35,6 +36,8 @@ u_getopts(char *av[], t_opts *opts) {
             opts->verbose = 1;
         else if (c == 'h')
             opts->help = 1;
+        else if (c == 'c')
+            opts->c = 4;
     }
     return (opts->noopt);
 }

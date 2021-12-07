@@ -8,10 +8,11 @@
 typedef unsigned char bool_t;
 
 typedef struct s_opts {
-    bool_t	verbose;
-    bool_t	help;
-    bool_t	noopt;
-    bool_t	textaddr;
+    bool_t			verbose;
+    bool_t			help;
+    bool_t			noopt;
+    bool_t			textaddr;
+    int	c;
 } t_opts;
 
 #endif

@@ -132,6 +132,9 @@ e_loop(t_ping * ping, struct sockaddr_in * servaddr, int sock)
         {
             continue; /* ping once every second */
         } else {
+            if (ping->c == 0) {
+                return (0);
+            }
             p_initpacket(ping->pack, seq);
             ping->reply = e_ping(sock, servaddr, ping);
             if (ping->reply == NULL) {
@@ -140,6 +143,7 @@ e_loop(t_ping * ping, struct sockaddr_in * servaddr, int sock)
             u_printpack(ping, seq);
             reptime = u_longtime();
             seq++;
+            ping->c -= (ping->c == -1) ? 0 : 1;
         }
     }
     return (0);
@@ -182,6 +186,9 @@ e_start(char *url, t_opts * opts)
             opts->textaddr = 0;
             ping.url = ipstr;
             /* return (u_printerr("invalid address", ipstr)); */
+        }
+        if (opts->c != 0) {
+            ping.c = opts->c;
         }
         printf("PING %s (%s): %d data bytes\n", url, ipstr, DATA_SIZE);
     } else {
